@@ -1,6 +1,6 @@
 import Button from './components/Button';
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const buttonIcons = [
 	{ name: 'fas fa-cat', color: '#FAC05E' },
@@ -14,6 +14,9 @@ const buttonIcons = [
 function App() {
 	const [buttons, setButtons] = useState([]);
 	const [turns, setTurns] = useState(0);
+	const [buttonOne, setButtonOne] = useState(null);
+	const [buttonTwo, setButtonTwo] = useState(null);
+	const [disabled, setDisabled] = useState(false);
 
 	const newGame = () => {
 		const buttonsSet = [...buttonIcons, ...buttonIcons]
@@ -22,24 +25,67 @@ function App() {
 				...button,
 				id: Math.random(),
 				matched: false,
-				selected: false,
 			}));
 
+		setButtonOne(null);
+		setButtonTwo(null);
 		setButtons(buttonsSet);
 		setTurns(0);
 	};
 
-	const handleNewGame = () => {
-		newGame();
+	const handleSelect = (button) => {
+		buttonOne ? setButtonTwo(button) : setButtonOne(button);
 	};
+
+	useEffect(
+		() => buttonOne && buttonTwo && compareSelection(),
+		[buttonOne, buttonTwo]
+	);
+
+	const compareSelection = () => {
+		setDisabled(true);
+		buttonOne.name === buttonTwo.name && setMatchedSelection();
+		setTimeout(() => resetTurn(), 1000);
+	};
+
+	const setMatchedSelection = () => {
+		setButtons((prev) => {
+			return prev.map((button) => {
+				if (button.name === buttonOne.name) {
+					return { ...button, matched: true };
+				} else {
+					return button;
+				}
+			});
+		});
+	};
+
+	const resetTurn = () => {
+		setButtonOne(null);
+		setButtonTwo(null);
+		setTurns((prev) => prev + 1);
+		setDisabled(false);
+	};
+
+	useEffect(() => newGame(), []);
 
 	return (
 		<div className='App'>
 			<h1>Memory Game</h1>
-			<button onClick={handleNewGame}>New Game</button>
+			<button onClick={newGame}>New Game</button>
 			<div className='buttons-grid'>
 				{buttons.map((button) => (
-					<Button button={button} key={button.id} />
+					<Button
+						button={button}
+						handleSelect={handleSelect}
+						selected={
+							button === buttonOne ||
+							button === buttonTwo ||
+							button.matched
+						}
+						disabled={disabled}
+						key={button.id}
+					/>
 				))}
 			</div>
 		</div>
