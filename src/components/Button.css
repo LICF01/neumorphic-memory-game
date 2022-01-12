@@ -4,12 +4,12 @@
 	border-radius: 50%;
 	margin: 1rem;
 	cursor: pointer;
+	transition: all ease-in 0.2s;
 }
 
 .button i {
 	font-size: 5rem;
 	margin: 2rem;
-	opacity: 0;
 }
 
 .unselected {
@@ -20,6 +20,15 @@
 		inset 0px 0px 4px rgba(255, 255, 255, 0.2);
 }
 
+.unselected:hover {
+	box-shadow: inset 7px 7px 15px rgba(55, 84, 170, 0.15),
+		inset -7px -7px 20px rgba(255, 255, 255, 1),
+		0px 0px 4px rgba(255, 255, 255, 0.2);
+}
+
+.unselected i {
+	opacity: 0;
+}
 
 .selected {
 	box-shadow: inset 7px 7px 15px rgba(55, 84, 170, 0.15),
@@ -29,4 +38,5 @@
 
 .selected i {
 	opacity: 1;
+	transition: all ease-in 0.2s;
 }
